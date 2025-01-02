@@ -29,15 +29,8 @@ export default function AlertMsg(){
             }, 3000)
 
 
-            // const timeout2 = setTimeout(() => {
-            //     dispatch(hideAlertMsg())
-            //     clearTimeout(timeout2)
-            // }, 4500)
-
-
             return () => {
                 clearTimeout(timeout1)
-                // clearTimeout(timeout2)
             }
         }
     }, [fadeClass])
@@ -65,7 +58,7 @@ export default function AlertMsg(){
                         :
                             "transparent"
                 }}
-                className="alert-msg-container w-100 m-4 mx-5"
+                className="alert-msg-container w-100 m-4 mx-lg-5 mx-md-3 mx-2"
             >
                 <FaLightbulb 
                     color="#FFF"
