@@ -1,12 +1,15 @@
 /* font families  */
-.font-family-poppins{
+.font-family-Poppins{
   font-family: Poppins;
 }
-.font-family-sourceCodePro{
+.font-family-SourceCodePro{
   font-family: SourceCodePro;
 }
-.font-family-openSans{
+.font-family-OpenSans{
   font-family: OpenSans;
+}
+.font-family-Sacramento{
+  font-family: Sacramento;
 }
 
 
@@ -167,6 +170,15 @@
 .txt-E1F013{
   color: #E1F013;
 }
+.txt-22180E{
+  color: #22180E;
+}
+.txt-FDFBFF{
+  color: #FDFBFF;
+}
+.txt-5A4282{
+  color: #5A4282
+}
 
 
 
@@ -191,6 +203,15 @@
 }
 .bg-E1F013{
   background-color: #E1F013;
+}
+.bg-22180E{
+  background-color: #22180E;
+}
+.bg-FDFBFF{
+  background-color: #FDFBFF;
+}
+.bg-5A4282{
+  background-color: #5A4282;
 }
 
 

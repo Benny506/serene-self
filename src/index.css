@@ -28,6 +28,11 @@
   src: url('./assets/fonts/sourceCodePro/sourceCodePro.ttf');
 }
 
+@font-face {
+  font-family: Sacramento;
+  src: url('./assets/fonts/sacramento/Sacramento.ttf');
+}
+
 input::placeholder{
   color: #D9D9D9;
   font-family: Poppins;

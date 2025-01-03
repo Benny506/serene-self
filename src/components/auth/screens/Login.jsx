@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { showAlertMsg } from "../../redux/slices/alertMsgSLice";
 import { appLoadStart, appLoadStop } from "../../redux/slices/appLoadingSlice";
 import { onRequestApi } from "../../apiRequests/requestApi";
+import { setUserDetails } from "../../redux/slices/userDetailsSlice";
 
 
 
@@ -56,11 +57,17 @@ export default function Login(){
         try {
 
             const { data } = result
-            const { details } = data
+            const { details, accessToken } = data
+            const { user_id } = details
+
+            localStorage.setItem("user_id", user_id)
+            localStorage.setItem("accessToken", accessToken)
 
             setApiReqs({ isLoading: false, data: null, errorMsg: null })
-            //navigate here. Remove showAlertMsg later!
-            dispatch(showAlertMsg({ msg: 'Login successful. Working on other screens via development!', type: 'success' }))
+
+            dispatch(appLoadStop())
+            dispatch(setUserDetails({ details, accessToken }))
+            navigateTo('/')
 
             return;
             
