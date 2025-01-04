@@ -19,9 +19,9 @@ export default function AuthRouter(){
     useEffect(() => {
         if(
             !pathname.includes('login')
-            ||
+            &&
             !pathname.includes('confirm-email')
-            ||
+            &&
             !pathname.includes('reset-password')
         ){
             goToSignup()
@@ -37,7 +37,7 @@ export default function AuthRouter(){
                 <div className="col-lg-6 col-md-12 col-12 px-lg-5 px-md-3 px-2 py-lg-0 py-3 py-2">
                     <Routes>
                         <Route 
-                            path="/"
+                            path="*"
                             element={
                                 <SignUp />
                             }
