@@ -9,7 +9,10 @@ export function getOrdinalSuffix(day) {
 }
 
 
-export function formatDate1({ date }) {
+export function formatDate1({ _date }) {
+
+    const date = new Date(_date)
+
     const options = { month: "long", day: "numeric", year: "numeric" };
     const formattedDate = new Intl.DateTimeFormat("en-US", options).format(date);
   

@@ -33,6 +33,15 @@
   src: url('./assets/fonts/sacramento/Sacramento.ttf');
 }
 
+.writing-bg{
+  background-image: url('./assets/images/app/appBg.png');
+  min-height: 100vh;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 input::placeholder{
   color: #D9D9D9;
   font-family: Poppins;
@@ -52,11 +61,11 @@ input::placeholder{
   background-position: center;
 }
 
-button, input{
+button, input, textarea{
   border: none;
   outline: none;
 }
 
-input:focus{
+input:focus, textarea:focus{
   outline: none;
 }

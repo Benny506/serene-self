@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import AuthCarousel from '../auxiliary/AuthCarousel'
 import SignUp from "../screens/SignUp";
 import Login from "../screens/Login";
@@ -10,7 +10,23 @@ import ResetPassword from "../screens/ResetPassword";
 
 export default function AuthRouter(){
 
+    const navigate = useNavigate()
+    const navigateTo = (path) => navigate(path)
+    const goToSignup = () => navigateTo('/')
+
     const { pathname } = useLocation()
+
+    useEffect(() => {
+        if(
+            !pathname.includes('login')
+            ||
+            !pathname.includes('confirm-email')
+            ||
+            !pathname.includes('reset-password')
+        ){
+            goToSignup()
+        }
+    }, [pathname])
 
     return (
         <ScrollToTop

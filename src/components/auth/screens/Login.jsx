@@ -57,7 +57,7 @@ export default function Login(){
         try {
 
             const { data } = result
-            const { details, accessToken } = data
+            const { details, accessToken, entries } = data
             const { user_id } = details
 
             localStorage.setItem("user_id", user_id)
@@ -66,7 +66,7 @@ export default function Login(){
             setApiReqs({ isLoading: false, data: null, errorMsg: null })
 
             dispatch(appLoadStop())
-            dispatch(setUserDetails({ details, accessToken }))
+            dispatch(setUserDetails({ details, accessToken, entries }))
             navigateTo('/')
 
             return;

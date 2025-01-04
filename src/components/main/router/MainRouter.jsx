@@ -14,7 +14,7 @@ export default function MainRouter(){
                 }
             />
             <Route 
-                path="/home"
+                path="/dashboard"
                 element={
                     <Home />
                 }

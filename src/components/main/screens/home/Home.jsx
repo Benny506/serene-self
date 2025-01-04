@@ -6,6 +6,10 @@ import { formatDate1, monthStrings } from "../../../globals/globals";
 import { useSelector } from 'react-redux'
 import noEntryImg from '../../../../assets/images/home/noEntryImg.png'
 import { getUserDetailsState } from "../../../redux/slices/userDetailsSlice";
+import { BsFeather } from "react-icons/bs";
+import AddEntryModal from '../../../entries/AddEntryModal'
+import UpdateEntryModal from "../../../entries/UpdateEntryModal";
+import { useLocation } from "react-router-dom";
 
 
 
@@ -14,7 +18,7 @@ const DisplayActiveEntry = ({ entry }) => {
         return <></>
     }
 
-    const { title, text, id, written_date } = entry
+    const { title, entry_text, id, written_date } = entry
 
     return (
         <div className="p-4 m-3">
@@ -22,7 +26,7 @@ const DisplayActiveEntry = ({ entry }) => {
                 { title }
             </h1>
             <p className="m-0 p-0 font-family-SourceCodePro fw-300 txt-18 txt-000">
-                { text }
+                { entry_text }
             </p>
         </div>
     )
@@ -32,6 +36,8 @@ const DisplayActiveEntry = ({ entry }) => {
 
 export default function Home(){
 
+    const { pathname } = useLocation()
+
     const entryPreviewDiv = useRef(null);
 
     const entries = useSelector(state => getUserDetailsState(state).entries)
@@ -39,6 +45,34 @@ export default function Home(){
     const [activeEntry, setActiveEntry] = useState(entries[0])
     const [searchFilter, setSearchFilter] = useState('')
     const [filteredEntries, setFilteredEntries] = useState(entries)
+    const [addEntryModal, setAddEntryModal] = useState({ visible: false, hide: null })
+    const [updateEntryModal, setUpdateEntryModal] = useState({ visible: false, hide: null })
+    const [entryUpdate, setEntryUpdate] = useState()
+
+    useEffect(() => {
+        setFilteredEntries(entries)
+    }, [entries])
+
+    useEffect(() => {
+        if(entryUpdate){
+            const { _title, _entryText, _entryId, _entryWrittenDate } = entryUpdate
+        
+            if(_title && _entryText && _entryId){
+                openUpdateEntryModal()
+            }            
+        }
+    }, [entryUpdate])
+
+    const openAddEntryModal = () => setAddEntryModal({ visible: true, hide: hideAddEntryModal })
+    const hideAddEntryModal = () => setAddEntryModal({ visible: false, hide: null })
+
+    const openUpdateEntryModal = () => setUpdateEntryModal({ visible: true, hide: hideUpdateEntryModal })
+    const hideUpdateEntryModal = () => {
+        // setEntryUpdate({ _title: '', _entryText: '', _entryId })
+        setUpdateEntryModal({ visible: false, hide: null })
+
+        return;
+    }
 
     const handleSearchFilterChange = e => {
         if(e){
@@ -92,11 +126,11 @@ export default function Home(){
 
     const displayEntries = filteredEntries.map((entry, i) => {
 
-        const { id, title, text, written_date } = entry
+        const { entry_id, title, entry_text, written_date } = entry
 
-        const dateStr = formatDate1({ date: written_date })
+        const dateStr = formatDate1({ _date: written_date })
 
-        const isActive = activeEntry ? activeEntry.id == id ? true : false : false
+        const isActive = activeEntry ? activeEntry.entry_id == entry_id ? true : false : false
 
         const selectEntry = () => {
             if(entryPreviewDiv.current){
@@ -107,6 +141,20 @@ export default function Home(){
 
             return;
         }
+
+            const handleEditEntryBtn = (e) => {
+                if(e){
+                    e.stopPropagation()
+                    setEntryUpdate({ 
+                        _title: title, 
+                        _entryText: entry_text, 
+                        _entryId: entry_id,
+                        _entryWrittenDate: written_date
+                    })
+                }
+
+                return;
+            }
 
         return (
             <div
@@ -121,19 +169,22 @@ export default function Home(){
                 <div className="home-book-clip-container">
                     <BookClipSvg />
                 </div>
-                <h2 className="m-0 p-0 txt-000 fw-700 font-family-Sacramento txt-20 mb-2">
-                    { title }
-                </h2>
+                <div style={{ gap: '5px' }} className="mb-1 d-flex align-items-center justify-content-between">
+                    <h2 className="m-0 p-0 txt-000 fw-700 font-family-Sacramento txt-20">
+                        { title }
+                    </h2>                    
+                    <BsFeather onClick={handleEditEntryBtn} size={20} className="clickable" color="#22180E" />
+                </div>
                 <p className="m-0 p-0 txt-5A4282 fw-300 txt-13 font-family-OpenSans mb-3">
                     { dateStr }
                 </p>
                 <p className="m-0 p-0 txt-000 fw-300 txt-15 font-family-OpenSans">
                     { 
-                        text.length <= 200
+                        entry_text.length <= 200
                         ?
-                            text
+                            entry_text
                         :
-                            text.slice(0, 200) + '...'
+                            entry_text.slice(0, 200) + '...'
                     }
                 </p>
             </div>
@@ -163,9 +214,19 @@ export default function Home(){
 
                 <div className="col-lg-5 col-md-5 col-5 d-flex align-items-center justify-content-end">
                     <div className="clickable mx-2 mx-md-3 mx-lg-4">
-                        <DashboardSvg width={'23'} height={"22"} />
+                        <DashboardSvg 
+                            color={
+                                pathname.includes('dashboard') 
+                                ?
+                                    '#3A5B22'
+                                :
+                                    '#221824'
+                            } 
+                            width={'23'} 
+                            height={"22"} 
+                        />
                     </div>
-                    <div className="clickable mx-2 mx-md-3 mx-lg-4">
+                    <div onClick={openAddEntryModal} className="clickable mx-2 mx-md-3 mx-lg-4">
                         <PlusSvg width={'30'} height={'25'} />
                     </div>
                     <div className="clickable mx-2 mx-md-3 mx-lg-4">
@@ -177,42 +238,44 @@ export default function Home(){
             {
                 activeEntry
                 ?
-                    <div className="d-lg-flex d-md-block d-block px-lg-5 px-md-3 px-3 align-items-start justify-content-between">
-                        <div className="col-lg-5 col-md-12 col-12 mb-lg-0 mb-md-4 mb-4">
-                            { displayEntries }
-                        </div>
-                        <div 
-                            ref={entryPreviewDiv}
-                            className="col-lg-7 col-md-12 col-12 px-lg-3 px-md-3 px-0"
-                        >
+                    <div className="writing-bg">
+                        <div className="d-lg-flex d-md-block d-block px-lg-5 px-md-3 px-3 align-items-start justify-content-between">
+                            <div className="col-lg-5 col-md-12 col-12 mb-lg-0 mb-md-4 mb-4">
+                                { displayEntries }
+                            </div>
                             <div 
-                                style={{
-                                    position: 'relative',
-                                    padding: '2%'
-                                }}
-                                className="home-entry-preview-container"
+                                ref={entryPreviewDiv}
+                                className="col-lg-7 col-md-12 col-12 px-lg-3 px-md-3 px-0"
                             >
-                                <div
-                                    className=""
-                                    style={{
-                                        height: '1px',
-                                        top: '36.5px',
-                                        width: '98%',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.37)',
-                                        position: 'absolute'
-                                    }}
-                                />
                                 <div 
-                                    className=""
                                     style={{
-                                        width: '1px',
-                                        height: '95.7%',
-                                        left: '36.5px',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.37)',
-                                        position: 'absolute'
+                                        position: 'relative',
+                                        padding: '2%'
                                     }}
-                                />
-                                <DisplayActiveEntry entry={activeEntry} />
+                                    className="home-entry-preview-container"
+                                >
+                                    <div
+                                        className=""
+                                        style={{
+                                            height: '1px',
+                                            top: '36.5px',
+                                            width: '98%',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.37)',
+                                            position: 'absolute'
+                                        }}
+                                    />
+                                    <div 
+                                        className=""
+                                        style={{
+                                            width: '1px',
+                                            height: '95.7%',
+                                            left: '36.5px',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.37)',
+                                            position: 'absolute'
+                                        }}
+                                    />
+                                    <DisplayActiveEntry entry={activeEntry} />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -221,6 +284,15 @@ export default function Home(){
                         <img src={noEntryImg} className="col-lg-12 col-md-12 col-12" />
                     </div>
             }
+
+            <AddEntryModal 
+                modalProps={addEntryModal}
+            />
+
+            <UpdateEntryModal 
+                modalProps={updateEntryModal}
+                entryUpdate={entryUpdate}
+            />
         </div>
     )
 }

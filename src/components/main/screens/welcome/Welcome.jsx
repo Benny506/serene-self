@@ -11,7 +11,7 @@ export default function Welcome(){
 
     const navigate = useNavigate()
     const navigateTo = path => navigate(path)
-    const goToHome = () => navigateTo('/home')
+    const goToDashboard = () => navigateTo('/dashboard')
 
     return(
         <div>
@@ -36,7 +36,7 @@ export default function Welcome(){
                                 <div className="mb-5 pb-5" />
 
                                 <button
-                                    onClick={goToHome}
+                                    onClick={goToDashboard}
                                     className="welcome-1-btn w-lg-75 w-md-100 w-100"
                                 >
                                     How was your day ?

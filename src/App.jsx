@@ -10,6 +10,9 @@ import { getUserDetailsState, setUserDetails } from './components/redux/slices/u
 import { appLoadStart, appLoadStop } from './components/redux/slices/appLoadingSlice'
 import { onRequestApi } from './components/apiRequests/requestApi'
 import { showAlertMsg } from './components/redux/slices/alertMsgSLice'
+import LoadWaiting from './components/loaders/LoadWaiting'
+
+
 
 
 
@@ -62,11 +65,11 @@ function App() {
     try {
 
       const { data } = result
-      const { details } = data
+      const { details, accessToken, entries } = data
 
       setApiReqs({ isLoading: false, data: null, errorMsg: null })
 
-      dispatch(setUserDetails({ details }))
+      dispatch(setUserDetails({ details, accessToken, entries }))
 
       return;
       
@@ -90,6 +93,10 @@ function App() {
       <AlertMsg />
 
       {
+        apiReqs.isLoading
+        ?
+          <LoadWaiting />
+        :
         details
         ?
           <MainRouter />
