@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { IoMdMenu } from "react-icons/io";
+import { IoMdMenu, IoMdSettings } from "react-icons/io";
 import './css/navigation.css'
 import logoIcon from '../../../assets/images/logos/logo-icon-only.png'
 import { Offcanvas } from "react-bootstrap";
 import { IoCloseOutline } from "react-icons/io5";
+import { CiLogout } from "react-icons/ci";
 import { CollectionSvg, DashboardSvg, FileSvg } from "../../svgs/CustomSvgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddEntryModal from "../../entries/AddEntryModal";
+import { useDispatch } from "react-redux";
+import { clearUserDetails } from "../../redux/slices/userDetailsSlice";
+import { appLoadStart, appLoadStop } from "../../redux/slices/appLoadingSlice";
 
 
 
@@ -26,12 +30,23 @@ const navLinks = [
         Icon: ({ width, color, height }) => <FileSvg width={width} color={color} height={height} />,
         type: 'newEntry'
     },        
+    {
+        title: 'Settings',
+        Icon: ({ width, color }) => <IoMdSettings size={width} color={color} />,
+        path: '/settings'
+    },
+    {
+        title: 'Logout',
+        Icon: ({ width, color }) => <CiLogout size={width} color={color} />,
+        type: 'logout'
+    }
 ]
 
 
 
 
 export default function Navigation(){
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
     const navigateTo = (path) => navigate(path)
@@ -40,6 +55,23 @@ export default function Navigation(){
 
     const [offCanvasNav, setOffCanvasNav] = useState({ visible: false })
     const [addEntryModal, setAddEntryModal] = useState({ visible: false, hide: null })
+
+    const logout = () => {
+        dispatch(appLoadStart())
+
+        const logoutTimer = setTimeout(() => {
+            localStorage.clear()
+            
+            dispatch(clearUserDetails())
+            dispatch(appLoadStop())
+            
+            navigateTo('/')
+
+            dispatch(showAlertMsg({ msg: 'User logged out' }))
+
+            clearTimeout(logoutTimer)
+        }, 3000)
+    }
 
     const openOffCanvasNav = () => setOffCanvasNav({ visible: true })
     const hideOffCanvasNav = () => setOffCanvasNav({ visible: false })
@@ -55,6 +87,10 @@ export default function Navigation(){
         const handleNavClick = () => {
             if(type == 'newEntry'){
                 openAddEntryModal()
+            }
+
+            if(type == 'logout'){
+                logout()
             }
 
             if(path){
@@ -99,7 +135,7 @@ export default function Navigation(){
                     <IoMdMenu color="rgba(0, 0, 0, 0.47)" size={30} className="clickable" onClick={openOffCanvasNav} />
                 </div>
                 <div className="col-lg-4 d-lg-flex d-md-none d-none align-items-center justify-content-center">
-                    <h1 className="m-0 p-0 text-center font-family-Sacramento txt-000 fw-700 txt-30">
+                    <h1 className="m-0 p-0 text-center font-family-Sacramento txt-000 fw-400 txt-30">
                         Your thoughts ?
                     </h1>
                 </div>
@@ -117,11 +153,11 @@ export default function Navigation(){
                         <img src={logoIcon} className="col-lg-5 col-md-5 col-5" />
                     </div>                    
                     <div className="col-lg-4 col-md-4 col-4 d-flex align-items-center justify-content-center">
-                        <h1 className="m-0 p-0 txt-000 fw-800 font-family-Sacramento txt-31 text-center">
+                        <h1 className="m-0 p-0 txt-000 fw-400 font-family-Sacramento txt-31 text-center">
                             Serene Self
                         </h1>
                     </div>
-                    <div className="d-flex align-items-center justify-content-end px-4">
+                    <div className="d-flex align-items-center justify-content-end px-4 mx-1">
                         <IoCloseOutline size={30} color="#3A5B22" className="clickable" onClick={hideOffCanvasNav} />
                     </div>
                 </div>

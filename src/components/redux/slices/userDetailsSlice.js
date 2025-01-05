@@ -25,11 +25,16 @@ const userDetailsSlice = createSlice({
             if(action.payload.accessToken){
                 state.accessToken = action.payload.accessToken
             }
+        },
+        clearUserDetails: (state) => {
+            state.details = null,
+            state.entries = [],
+            state.accessToken = null
         }
     }
 })
 
-export const { setUserDetails } = userDetailsSlice.actions
+export const { setUserDetails, clearUserDetails } = userDetailsSlice.actions
 
 export const getUserDetailsState = state => state.userDetailsSlice
 

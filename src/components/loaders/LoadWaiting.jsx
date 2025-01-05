@@ -10,7 +10,9 @@ export default function LoadWaiting(){
             }}
             className="d-flex bg-3A5B22 align-items-center justify-content-center"
         >
-            <img src={logoIcon} />
+            <div className="col-lg-5 col-md-5 col-7">
+                <img src={logoIcon} className="col-lg-12 col-md-12 col-12" />   
+            </div>
         </div>
     )
 }

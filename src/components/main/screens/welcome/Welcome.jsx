@@ -17,6 +17,7 @@ export default function Welcome(){
         <div>
             <Carousel
                 controls={false}
+                interval={5000}
             >
                 <Carousel.Item>
                     <div className="bg-img welcome-bg welcome-bg-1">

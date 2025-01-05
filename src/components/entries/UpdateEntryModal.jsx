@@ -163,7 +163,7 @@ export default function UpdateEntryModal({ modalProps, entryUpdate }){
             >
                 <div className="col-lg-4" />
                 <div className="col-lg-4 d-flex align-items-center justify-content-center">
-                    <h1 className="font-family-Sacramento m-0 p-0 txt-000 fw-600 txt-30">
+                    <h1 className="font-family-Sacramento m-0 p-0 txt-000 fw-400 txt-30">
                         Missed something...?
                     </h1>
                 </div>

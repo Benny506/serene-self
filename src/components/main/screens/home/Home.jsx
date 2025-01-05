@@ -170,7 +170,7 @@ export default function Home(){
                     <BookClipSvg />
                 </div>
                 <div style={{ gap: '5px' }} className="mb-1 d-flex align-items-center justify-content-between">
-                    <h2 className="m-0 p-0 txt-000 fw-700 font-family-Sacramento txt-20">
+                    <h2 className="m-0 p-0 txt-000 fw-500 font-family-Sacramento txt-20">
                         { title }
                     </h2>                    
                     <BsFeather onClick={handleEditEntryBtn} size={20} className="clickable" color="#22180E" />
