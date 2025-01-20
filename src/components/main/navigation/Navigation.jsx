@@ -21,11 +21,6 @@ const navLinks = [
         path: '/dashboard'
     },
     {
-        title: 'Analysis',
-        Icon: ({ width, color, height }) => <CollectionSvg width={width} color={color} height={height} />,
-        // path: '/analysis',        
-    }, 
-    {
         title: 'New Entry',
         Icon: ({ width, color, height }) => <FileSvg width={width} color={color} height={height} />,
         type: 'newEntry'

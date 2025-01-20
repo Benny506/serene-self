@@ -3,13 +3,17 @@ import Navigation from "../../navigation/Navigation";
 import './css/home.css'
 import { BookClipSvg, CollectionSvg, DashboardSvg, PlusSvg, SearchSvg } from "../../../svgs/CustomSvgs";
 import { formatDate1, monthStrings } from "../../../globals/globals";
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import noEntryImg from '../../../../assets/images/home/noEntryImg.png'
-import { getUserDetailsState } from "../../../redux/slices/userDetailsSlice";
+import { getUserDetailsState, setUserDetails } from "../../../redux/slices/userDetailsSlice";
 import { BsFeather } from "react-icons/bs";
 import AddEntryModal from '../../../entries/AddEntryModal'
 import UpdateEntryModal from "../../../entries/UpdateEntryModal";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
+import { appLoadStart, appLoadStop } from "../../../redux/slices/appLoadingSlice";
+import { onRequestApi } from "../../../apiRequests/requestApi";
+import { showAlertMsg } from "../../../redux/slices/alertMsgSLice";
 
 
 
@@ -35,12 +39,19 @@ const DisplayActiveEntry = ({ entry }) => {
 
 
 export default function Home(){
+    const dispatch = useDispatch()
+
+    const navigate = useNavigate()
+    const navigateTo = (path, data) => navigate(path, { state: data })
+    const goToAnalytics = (data) => navigateTo('/analytics', data)
 
     const { pathname } = useLocation()
 
     const entryPreviewDiv = useRef(null);
 
     const entries = useSelector(state => getUserDetailsState(state).entries)
+    const userDetails = useSelector(state => getUserDetailsState(state).details)
+    const accessToken = useSelector(state => getUserDetailsState(state).accessToken)
 
     const [activeEntry, setActiveEntry] = useState(entries[0])
     const [searchFilter, setSearchFilter] = useState('')
@@ -48,9 +59,37 @@ export default function Home(){
     const [addEntryModal, setAddEntryModal] = useState({ visible: false, hide: null })
     const [updateEntryModal, setUpdateEntryModal] = useState({ visible: false, hide: null })
     const [entryUpdate, setEntryUpdate] = useState()
+    const [apiReqs, setApiReqs] = useState({ isLoading: false, data: null, errorMsg: null })
+
+    useEffect(() => {
+        const { isLoading, data } = apiReqs
+
+        if(isLoading){
+            dispatch(appLoadStart())
+        
+        } else{
+            dispatch(appLoadStop())
+        }
+
+        if(isLoading && data){
+            const { type, requestInfo } = data
+
+            if(type == 'deleteEntry'){
+                onRequestApi({
+                    requestInfo,
+                    successCallBack: deleteEntrySuccess,
+                    failureCallback: deleteEntryFailure
+                })
+            }
+        }
+    }, [apiReqs])
 
     useEffect(() => {
         setFilteredEntries(entries)
+
+        if(entries){
+            setActiveEntry(entries[0])
+        }
     }, [entries])
 
     useEffect(() => {
@@ -62,6 +101,41 @@ export default function Home(){
             }            
         }
     }, [entryUpdate])
+
+    const deleteEntrySuccess = ({ requestInfo }) => {
+        try {
+
+            const { data } = requestInfo
+            const { entry_id } = data
+
+            const updatedEntries = entries.filter(entry => entry.entry_id != entry_id)
+
+            if(activeEntry){
+                if(activeEntry.entry_id == entry_id){
+                    setActiveEntry(updatedEntries[0])
+                }
+            }
+
+            dispatch(setUserDetails({
+                entries: updatedEntries
+            }))
+
+            setApiReqs({ isLoading: false, data: null, errorMsg: null })
+
+            dispatch(showAlertMsg({ msg: 'Entry deleted!', type: 'success' }))
+
+            return;
+            
+        } catch (error) {
+            console.error(error)
+            return deleteEntryFailure({ errorMsg: "Something went wrong! Try again." })
+        }
+    }
+
+    const deleteEntryFailure = ({ errorMsg }) => {
+        setApiReqs({ isLoading: false, data: null, errorMsg })
+        dispatch(showAlertMsg({ msg: errorMsg, type: 'error' }))
+    }
 
     const openAddEntryModal = () => setAddEntryModal({ visible: true, hide: hideAddEntryModal })
     const hideAddEntryModal = () => setAddEntryModal({ visible: false, hide: null })
@@ -142,19 +216,51 @@ export default function Home(){
             return;
         }
 
-            const handleEditEntryBtn = (e) => {
-                if(e){
-                    e.stopPropagation()
-                    setEntryUpdate({ 
-                        _title: title, 
-                        _entryText: entry_text, 
-                        _entryId: entry_id,
-                        _entryWrittenDate: written_date
-                    })
-                }
-
-                return;
+        const handleEditEntryBtn = (e) => {
+            if(e){
+                e.stopPropagation()
+                setEntryUpdate({ 
+                    _title: title, 
+                    _entryText: entry_text, 
+                    _entryId: entry_id,
+                    _entryWrittenDate: written_date
+                })
             }
+
+            return;
+        }
+
+        const deleteEntry = (e) => {
+            if(e){
+                e.stopPropagation()
+            }
+
+            return setApiReqs({
+                isLoading: true,
+                errorMsg: null,
+                data: {
+                    type: 'deleteEntry',
+                    requestInfo: {
+                        url: 'users/entries/delete-entry',
+                        method: 'POST',
+                        data: {
+                            entry_id,
+                            user_id: userDetails.user_id
+                        },
+                        token: accessToken
+                    }
+                }
+            })
+        }
+
+        const viewAnalysis = (e) => {
+            if(e){
+                e.stopPropagation()
+            }
+
+            setActiveEntry(entry)
+            goToAnalytics({ entry })
+        }
 
         return (
             <div
@@ -172,13 +278,16 @@ export default function Home(){
                 <div style={{ gap: '5px' }} className="mb-1 d-flex align-items-center justify-content-between">
                     <h2 className="m-0 p-0 txt-000 fw-500 font-family-Sacramento txt-20">
                         { title }
-                    </h2>                    
-                    <BsFeather onClick={handleEditEntryBtn} size={20} className="clickable" color="#22180E" />
+                    </h2>     
+                    <div style={{ gap: '3px' }} className="d-flex align-items-center">
+                        <BsFeather onClick={handleEditEntryBtn} size={20} className="clickable" color="#22180E" />                    
+                        <MdDelete onClick={deleteEntry} size={20} className="clickable" color="#3A5B22" />
+                    </div>               
                 </div>
                 <p className="m-0 p-0 txt-5A4282 fw-300 txt-13 font-family-OpenSans mb-3">
                     { dateStr }
                 </p>
-                <p className="m-0 p-0 txt-000 fw-300 txt-15 font-family-OpenSans">
+                <p className="m-0 p-0 mb-3 txt-000 fw-300 txt-15 font-family-OpenSans">
                     { 
                         entry_text.length <= 200
                         ?
@@ -187,6 +296,15 @@ export default function Home(){
                             entry_text.slice(0, 200) + '...'
                     }
                 </p>
+                <button
+                    onClick={viewAnalysis}
+                    style={{
+                        border: '1px solid #3A5B22'
+                    }}
+                    className="px-3 py-2 txt-center txt-11 fw-600 font-family-SourceCodePro txt-000 bg-transparent rounded-3"
+                >
+                    View anaylsis
+                </button>
             </div>
         )
     })
@@ -228,10 +346,7 @@ export default function Home(){
                     </div>
                     <div onClick={openAddEntryModal} className="clickable mx-2 mx-md-3 mx-lg-4">
                         <PlusSvg width={'30'} height={'25'} />
-                    </div>
-                    <div className="clickable mx-2 mx-md-3 mx-lg-4">
-                        <CollectionSvg width={'31'} height={'28'} />
-                    </div>                                        
+                    </div>                                       
                 </div>
             </div>
 
