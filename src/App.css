@@ -8,8 +8,8 @@
 .font-family-OpenSans{
   font-family: OpenSans;
 }
-.font-family-Sacramento{
-  font-family: Sacramento;
+.font-family-Axiforma{
+  font-family: Axiforma;
 }
 
 
@@ -158,14 +158,29 @@
 .txt-FFF{
   color: #FFF
 }
+.txt-4E4E4E{
+  color: #4E4E4E;
+}
 .txt-D9D9D9{
   color: #D9D9D9;
 }
-.txt-3A5B22{
-  color: #3A5B22; /* logo color */
+.txt-56BA28{
+  color: #56BA28;
+}
+.txt-041643{
+  color: #041643;
+}
+.txt-CED4DA{
+  color: #CED4DA;
+}
+.txt-1352F1{
+  color: #1352F1; /* logo color */
 }
 .txt-EC2020{
   color: #EC2020;
+}
+.txt-FF0000{
+  color: #FF0000;
 }
 .txt-E1F013{
   color: #E1F013;
@@ -178,6 +193,15 @@
 }
 .txt-5A4282{
   color: #5A4282
+}
+.txt-696969{
+  color: #696969;
+}
+.txt-6C757D{
+  color: #6C757D;
+}
+.txt-F2F2F2{
+  color: #F2F2F2;
 }
 
 
@@ -192,11 +216,23 @@
 .bg-FFF{
   background-color: #FFF;
 }
+.bg-4E4E4E{
+  background-color: #4E4E4E;
+}
 .bg-D9D9D9{
   background-color: #D9D9D9;
 }
-.bg-3A5B22{
-  background-color: #3A5B22;
+.bg-1352F1{
+  background-color: #1352F1;
+}
+.bg-041643{
+  background-color: #041643;
+}
+.bg-56BA28{
+  background-color: #56BA28;
+}
+.bg-F2F2F2{
+  background-color: #F2F2F2;
 }
 .bg-EC2020{
   background-color: #EC2020;
@@ -212,6 +248,15 @@
 }
 .bg-5A4282{
   background-color: #5A4282;
+}
+.bg-696969{
+  background-color: #696969;
+}
+.bg-CED4DA{
+  background-color: #CED4DA;
+}
+.bg-6C757D{
+  background-color: #6C757D;
 }
 
 
