@@ -141,13 +141,12 @@ export default function AddEntryModal({ modalProps }){
                 }} 
                 className="p-3 d-flex align-items-center justify-content-between mb-4"
             >
-                <div className="col-lg-4" />
-                <div className="col-lg-4 d-flex align-items-center justify-content-center">
-                    <h1 className="font-family-Sacramento m-0 p-0 txt-000 fw-400 txt-30">
+                <div className="col-lg-10 d-flex align-items-center justify-content-center">
+                    <h1 className="font-family-Sacramento m-0 p-0 txt-000 text-center fw-400 txt-30">
                         Today's thoughts...?
                     </h1>
                 </div>
-                <div className="col-lg-4 d-flex align-items-center justify-content-end">
+                <div className="col-lg-2 d-flex align-items-center justify-content-end">
                     <IoCloseOutline size={30} color="#3A5B22" className="clickable" onClick={hide} />
                 </div>
             </div>
